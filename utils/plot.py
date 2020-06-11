@@ -22,15 +22,12 @@ def set_axes(axes, xlabel, ylabel, xlim, ylim, xscale, yscale, legend):
 class RealTimeVisualizer(object):
     def __init__(self, xlabel=None, ylabel=None, legend=None, xlim=None,
                  ylim=None, xscale='linear', yscale='linear', fmts=None,
-                 nrows=1, ncols=1, figsize=(3.5, 2.5)):
+                 figsize=(4.5, 3.5)):
         """Incrementally plot multiple lines."""
         self.legend = [] if legend is None else legend
         set_svg_display()
-        self.fig, self.axes = plt.subplots(nrows, ncols, figsize=figsize)
-        if nrows * ncols == 1:
-            self.axes = [self.axes, ]
 
-        self.X, self.Y, self.fmts = None, None, fmts
+        self.fig, self.axes = plt.subplots(1, 1, figsize=figsize)
         self.xlabel, self.ylabel = xlabel, ylabel
         self.xlim, self.ylim = xlim, ylim
         self.xscale, self.yscale = xscale, yscale
@@ -38,15 +35,21 @@ class RealTimeVisualizer(object):
         self.X, self.Y, self.fmts = None, None, fmts
 
     def config_axes(self):
-        set_axes(self.axes[0], self.xlabel, self.ylabel, self.xlim, self.ylim,
+        set_axes(self.axes, self.xlabel, self.ylabel, self.xlim, self.ylim,
                  self.xscale, self.yscale, self.legend)
 
     def add_point(self, x, y):
+        """
+        Plot points of multiple metrics (typically 3)
+        :param x: epoch
+        :param y: list or tuple of 3 metrics. `self.Y` is 3 lists of the 3 metrics. We plot them simultaneously.
+        """
         if not hasattr(y, "__len__"):
             y = [y]
         n = len(y)
         if not hasattr(x, "__len__"):
             x = [x] * n
+
         if self.X is None:
             self.X = [[] for _ in range(n)]
         if self.Y is None:
@@ -54,14 +57,15 @@ class RealTimeVisualizer(object):
         if self.fmts is None:
             self.fmts = ['-'] * n
 
+        # Append metrics which are not None to `self.Y`
         for i, (a, b) in enumerate(zip(x, y)):
             if a is not None and b is not None:
                 self.X[i].append(a)
                 self.Y[i].append(b)
-        self.axes[0].cla()
+        self.axes.cla()
 
         for x, y, fmt in zip(self.X, self.Y, self.fmts):
-            self.axes[0].plot(x, y, fmt)
+            self.axes.plot(x, y, fmt)
 
         self.config_axes()
         display.display(self.fig)
