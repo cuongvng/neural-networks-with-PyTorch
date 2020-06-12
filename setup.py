@@ -7,7 +7,7 @@ setup(
     author_email="nguyencuongcl1215@gmail.com",
     description="Some helper scripts to visualize neural networks' training process",
     url="https://github.com/cuongvng/neural-networks-with-PyTorch",
-    packages=find_packages(where="utils"),
+    packages=find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: MIT License",
