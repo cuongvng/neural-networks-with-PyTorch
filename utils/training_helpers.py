@@ -42,8 +42,8 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
                                                                  avg_training_time))
 
 def evaluate(net, test_loader, device):
-    labels = torch.tensor([]).to(device)
-    y_hats = torch.tensor([]).to(device)
+    labels = torch.tensor([], dtype=torch.int64).to(device)
+    y_hats = torch.tensor([], dtype=torch.int64).to(device)
 
     for X, y in test_loader:
         X, y = X.to(device), y.to(device)
