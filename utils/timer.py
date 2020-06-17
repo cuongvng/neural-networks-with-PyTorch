@@ -14,9 +14,3 @@ class Timer(object):
 
     def sum(self):
         return np.sum(self.running_times)
-
-    def avg(self):
-        return np.average(self.running_times)
-
-    def cumsum(self):
-        return np.cumsum(self.running_times)

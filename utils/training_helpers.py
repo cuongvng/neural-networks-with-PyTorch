@@ -37,9 +37,7 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
         timer.stop()
 
     total_training_time = timer.sum()
-    avg_training_time = timer.avg()
-    print("Total training time: {}; on average: {} per epoch".format(total_training_time,
-                                                                 avg_training_time))
+    print("Total training time: {}".format(total_training_time))
 
 def evaluate(net, test_loader, device):
     labels = torch.tensor([], dtype=torch.int64).to(device)
