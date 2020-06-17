@@ -13,12 +13,12 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
         timer.start()
 
         for i, data in enumerate(train_loader):
-            X, y = data     #unpack tuple `data` into input tensors and their labels
+            X, y = data     # unpack tuple `data` into input tensors and their labels
             X, y = X.to(device), y.to(device) # Move data to GPU, if available
-            optimizer.zero_grad()  # Reset các gradient trọng số sau mỗi lần cập nhật trọng số ở mỗi batch, nếu không chúng sẽ tích luỹ, gây ảnh hưởng đến các batch sau.
+            optimizer.zero_grad()  # Reset gradient after each batch param-update
 
-            y_hat_probas = net(X)  # Thực hiện lượt truyền xuôi (forward pass) cho batch hiện tại -> có kết quả nhãn dự đoán
-            loss = criterion(y_hat_probas, y)  # Tính hàm mất mát dựa vào dự đoán và nhãn gốc
+            y_hat_probas = net(X)  # Do forward pass for the current batch to get the predicted probabilities?
+            loss = criterion(y_hat_probas, y)  # Average loss across samples
             loss.backward()  # Perform backward pass
 
             optimizer.step()  # Update model parameters
@@ -27,7 +27,7 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
             if i % 99 == 0:
                 y_hat = torch.max(y_hat_probas, dim=1).indices
                 train_acc = _get_accuracy(y, y_hat)
-                train_loss = loss.mean()
+                train_loss = loss
                 visualizer.add_point(x=epoch+i/len(train_loader),
                                      y=[train_acc, train_loss, None])
 
