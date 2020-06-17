@@ -17,14 +17,15 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
             X, y = X.to(device), y.to(device) # Move data to GPU, if available
             optimizer.zero_grad()  # Reset các gradient trọng số sau mỗi lần cập nhật trọng số ở mỗi batch, nếu không chúng sẽ tích luỹ, gây ảnh hưởng đến các batch sau.
 
-            y_hat = net(X)  # Thực hiện lượt truyền xuôi (forward pass) cho batch hiện tại -> có kết quả nhãn dự đoán
-            loss = criterion(y_hat, y)  # Tính hàm mất mát dựa vào dự đoán và nhãn gốc
+            y_hat_probas = net(X)  # Thực hiện lượt truyền xuôi (forward pass) cho batch hiện tại -> có kết quả nhãn dự đoán
+            loss = criterion(y_hat_probas, y)  # Tính hàm mất mát dựa vào dự đoán và nhãn gốc
             loss.backward()  # Thực hiện lan truyền ngược (backward pass)
 
             optimizer.step()  # Cập nhật các tham số của mô hình
 
             # Plot train acc, train loss every 100 batches
             if i % 99 == 0:
+                y_hat = torch.max(y_hat_probas, dim=1).indices
                 train_acc = _get_accuracy(y, y_hat)
                 train_loss = loss.mean()
                 visualizer.add_point(x=epoch+i/len(train_loader),
@@ -46,7 +47,8 @@ def evaluate(net, test_loader, device):
 
     for X, y in test_loader:
         X, y = X.to(device), y.to(device)
-        y_hat = net(X)
+        y_hat_probas = net(X)
+        y_hat = torch.max(y_hat_probas, dim=1).indices
 
         # Append predictions and labels of the current minibatch
         labels = torch.cat([labels, y])
@@ -56,5 +58,6 @@ def evaluate(net, test_loader, device):
 
 def _get_accuracy(y, y_hat):
     assert isinstance(y, torch.Tensor) and isinstance(y_hat, torch.Tensor)
+    assert y.shape == y_hat.shape
     # Return the total numbers of position where `y == y_hat`
     return (y==y_hat).sum()/y.shape[0]
