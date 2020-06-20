@@ -38,6 +38,8 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
 
     total_training_time = timer.sum()
     print("Total training time: {}".format(total_training_time))
+    print("train loss: {:.4f}".format(train_loss.item()), "\ntrain acc: {:.4f}".format(train_acc.item()),
+          "\ntest acc: {:.4f}".format(test_acc.item()))
 
 def evaluate(net, test_loader, device):
     labels = torch.tensor([], dtype=torch.int64).to(device)
