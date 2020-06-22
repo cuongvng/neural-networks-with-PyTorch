@@ -10,6 +10,7 @@
 
 
 ## Tài liệu tham khảo
+- Original paper: https://arxiv.org/pdf/1512.03385.pdf
 - https://d2l.aivivn.com/chapter_convolutional-modern/resnet_vn.html
 - https://www.d2l.ai/chapter_convolutional-modern/resnet.html
 - https://medium.com/@14prakash/understanding-and-implementing-architectures-of-resnet-and-resnext-for-state-of-the-art-image-cf51669e1624
