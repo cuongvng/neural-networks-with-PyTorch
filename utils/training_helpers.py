@@ -17,9 +17,9 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
             X, y = X.to(device), y.to(device) # Move data to GPU, if available
             optimizer.zero_grad()  # Reset gradient after each batch param-update
 
-            y_hat_probas = net(X)  # Do forward pass for the current batch to get the predicted probabilities?
+            y_hat_probas = net(X)  # Do forward pass for the current batch
             loss = criterion(y_hat_probas, y)  # Average loss across samples
-            loss.backward()  # Perform backward pass
+            loss.backward()  # Do backward pass
 
             optimizer.step()  # Update model parameters
 
@@ -30,6 +30,9 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
                 train_loss = loss
                 visualizer.add_point(x=epoch+i/len(train_loader),
                                      y=[train_acc, train_loss, None])
+            # Free up GPU memory
+            del X, y, y_hat_probas
+            torch.cuda.empty_cache()
 
         test_acc = evaluate(net, test_loader, device)
         visualizer.add_point(x=epoch+1, y=[None, None, test_acc])
@@ -53,6 +56,10 @@ def evaluate(net, test_loader, device):
         # Append predictions and labels of the current minibatch
         labels = torch.cat([labels, y])
         y_hats = torch.cat([y_hats, y_hat])
+
+        # Free up GPU memory
+        del X, y, y_hat_probas, y_hat
+        torch.cuda.empty_cache()
 
     return _get_accuracy(labels, y_hats)
 
