@@ -7,6 +7,11 @@ def train_cnn(net, device, train_loader, test_loader, optimizer, criterion, n_ep
     visualizer = RealTimeVisualizer(xlabel="epoch", xlim=[0, n_epochs],
                                     legend=['train acc', 'train loss', 'test acc'])
 
+    def init_weights(model):
+        if isinstance(model, torch.nn.Conv2d) or isinstance(model, torch.nn.Linear):
+            torch.nn.init.xavier_uniform(model.weight)
+
+    net.apply(init_weights)
     net.to(device)
 
     for epoch in range(n_epochs):
