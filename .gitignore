@@ -3,5 +3,5 @@ build/
 dist/
 train_plot_utils.egg-info/
 /**/.idea/
-/**/data/
+/CNNs/data/
 /**/.ipynb_checkpoints/
