@@ -4,9 +4,16 @@ import torch
 
 # Create my own dataset class that reads data from csv, partitions it.
 class ForexDataset(Dataset):
-	def __init__(self, csv_file, num_steps=20):
+	def __init__(self, csv_file, num_steps=20, train=True, train_size=0.8):
 		super(ForexDataset, self).__init__()
-		self.data = self.get_sequential_data(df=pd.read_csv(csv_file), num_steps=num_steps)
+		df = pd.read_csv(csv_file)
+
+		train_size = int(train_size * df.shape[0])
+		if train:
+			df = df.iloc[0:train_size]
+		else:
+			df = df.iloc[train_size:]
+		self.data = self.get_sequential_data(df=df, num_steps=num_steps)
 
 	def __len__(self):
 		return len(self.data)
@@ -25,8 +32,11 @@ class ForexDataset(Dataset):
 		return data
 
 if __name__ == "__main__":
-	dataset = ForexDataset(csv_file="data/EURUSD.csv")
-	dataloader = DataLoader(dataset=dataset, batch_size=64, shuffle=False)
+	data_train = ForexDataset(csv_file="../RNNs/data/EURUSD.csv", train=True)
+	data_test = ForexDataset(csv_file="../RNNs/data/EURUSD.csv", train=False)
+	print(len(data_train), len(data_test))
+
+	dataloader = DataLoader(dataset=data_train, batch_size=64, shuffle=False)
 
 	for (x, y) in iter(dataloader):
 		print( x, y)
